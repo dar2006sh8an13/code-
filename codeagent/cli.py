@@ -2727,7 +2727,25 @@ def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> 
         focused_tools = list(dict.fromkeys(relevant_tools)) if relevant_tools else None
 
         try:
-            if should_use_tools:
+            if is_coding_request:
+                # Fast responsive streaming for code generation with automatic file saving
+                render_execution_status("Generating", f"Streaming code synthesis with {active_model}...", console)
+                console.print()
+                assistant_response = streaming_engine.stream_chat(
+                    client=client._client,
+                    messages=fitted_messages,
+                    model=active_model,
+                    temperature=settings.temperature,
+                    max_output_tokens=settings.max_output_tokens,
+                    display=True,
+                )
+                conv_mgr.add_assistant_message(assistant_response)
+                console.print()
+                saved_files = _extract_and_save_code_blocks(user_input, assistant_response, fs_mgr, console)
+                if saved_files:
+                    for sf in saved_files:
+                        render_execution_status("File verified", f"Created and confirmed '{sf}' on disk", console)
+            elif should_use_tools:
                 # Run through tool executor loop with execution lifecycle status
                 tool_timed_out = False
                 final_text = None
@@ -2974,7 +2992,34 @@ def one_shot_mode(
 
         focused_tools_one_shot = list(dict.fromkeys(relevant_tools_one_shot)) if relevant_tools_one_shot else None
 
-        if should_use_tools:
+        if is_coding_request:
+            render_execution_status("Generating", f"Streaming code synthesis with {model_name}...", console)
+            console.print()
+            fs_mgr = FilesystemManager(
+                settings=cfg,
+                write_approval_callback=cli_write_approval,
+                delete_confirmation_callback=cli_delete_confirmation,
+            )
+            streaming_engine = StreamingEngine(console=console)
+            sys_prompt = SYSTEM_CODING_INSTRUCTIONS
+            messages = [
+                {"role": "system", "content": sys_prompt},
+                {"role": "user", "content": clean_prompt},
+            ]
+            assistant_response = streaming_engine.stream_chat(
+                client=client._client,
+                messages=messages,
+                model=model_name,
+                temperature=cfg.temperature,
+                max_output_tokens=cfg.max_output_tokens,
+                display=True,
+            )
+            console.print()
+            saved_files = _extract_and_save_code_blocks(clean_prompt, assistant_response, fs_mgr, console)
+            if saved_files:
+                for sf in saved_files:
+                    render_execution_status("File verified", f"Created and confirmed '{sf}' on disk", console)
+        elif should_use_tools:
             fs_mgr = FilesystemManager(
                 settings=cfg,
                 write_approval_callback=cli_write_approval,
