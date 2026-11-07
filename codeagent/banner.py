@@ -15,12 +15,12 @@ from rich.text import Text
 from codeagent.config.settings import Settings, get_settings
 
 
-# ASCII art logo for Coder with Code (wide, width: 67)
-CODER_WITH_CODE_ASCII_LOGO = r"""  ____          _              _ _   _        ____          _      
- / ___|___   __| | ___ _ __   (_) |_| |__    / ___|___   __| | ___ 
-| |   / _ \ / _` |/ _ \ '__|  | | __| '_ \  | |   / _ \ / _` |/ _ \
-| |__| (_) | (_| |  __/ |     | | |_| | | | | |__| (_) | (_| |  __/
- \____\___/ \__,_|\___|_|     |_|\__|_| |_|  \____\___/ \__,_|\___|"""
+# ASCII art logo for Coder with Code (wide, width: 74)
+CODER_WITH_CODE_ASCII_LOGO = r"""  ____          _                   _ _   _         ____          _      
+ / ___|___   __| | ___ _ __  \  /\  /(_) |_| |__   / ___|___   __| | ___ 
+| |   / _ \ / _` |/ _ \ '__|  \/  \/  | | __| '_ \ | |   / _ \ / _` |/ _ \
+| |__| (_) | (_| |  __/ |     \ V /   | | |_| | | || |__| (_) | (_| |  __/
+ \____\___/ \__,_|\___|_|      \_/    |_|\__|_| |_| \____\___/ \__,_|\___|"""
 
 # ASCII art logo for Coder (compact, width: 29)
 CODER_COMPACT_ASCII_LOGO = r"""  ____          _            
@@ -104,7 +104,7 @@ def build_banner_renderable(
     # Dynamic application metadata
     metadata_lines = [
         header_text,
-        f"[dim]{'-' * min(max(terminal_width - 8, 20), 60)}[/dim]",
+        f"[dim]{'-' * max(terminal_width - 8, 20)}[/dim]",
         f" [bold white]Application:[/bold white]  [cyan]{cfg.app_name}[/cyan] [dim]v{version}[/dim]",
         f" [bold white]Model:[/bold white]        [bold yellow]{model}[/bold yellow]",
         f" [bold white]Provider:[/bold white]     [green]{provider_name}[/green] [dim]({cfg.ollama_host})[/dim]",
@@ -133,8 +133,8 @@ def build_banner_renderable(
         subtitle="[dim]Type /help for commands[/dim]",
         border_style="cyan" if is_online else "yellow",
         box=ROUNDED,
-        padding=(1, 2),
-        expand=False,
+        padding=(1, 1) if terminal_width < 85 else (1, 2),
+        expand=True,
     )
 
 
