@@ -118,3 +118,54 @@ class TestStreamingEngine:
                 )
             )
 
+    def test_streaming_thinking_suppressed_by_default(self) -> None:
+        """Verify internal reasoning/thinking chunks are suppressed from output by default."""
+        mock_chunks = [
+            MagicMock(message=MagicMock(content="", thinking="Let me think about how to build a calculator...")),
+            MagicMock(message=MagicMock(content="", reasoning_content="User wants HTML code...")),
+            MagicMock(message=MagicMock(content="```html\n", thinking="")),
+            MagicMock(message=MagicMock(content="<h1>Calculator</h1>\n", thinking="")),
+            MagicMock(message=MagicMock(content="```", thinking="")),
+        ]
+
+        mock_client = MagicMock()
+        mock_client.chat.return_value = iter(mock_chunks)
+
+        engine = StreamingEngine()
+        chunks = list(
+            engine.iter_stream_chunks(
+                client=mock_client,
+                messages=[{"role": "user", "content": "create calculator"}],
+                model="qwen3:latest",
+                include_thinking=False,
+            )
+        )
+
+        assert chunks == ["```html\n", "<h1>Calculator</h1>\n", "```"]
+        full_text = "".join(chunks)
+        assert "think" not in full_text
+        assert "reasoning" not in full_text
+
+    def test_streaming_think_tags_filtered(self) -> None:
+        """Verify <think>...</think> tags inside content are stripped when include_thinking=False."""
+        mock_chunks = [
+            MagicMock(message=MagicMock(content="<think>Planning the implementation</think>```html")),
+            MagicMock(message=MagicMock(content="\n<div>Test</div>\n")),
+            MagicMock(message=MagicMock(content="```")),
+        ]
+
+        mock_client = MagicMock()
+        mock_client.chat.return_value = iter(mock_chunks)
+
+        engine = StreamingEngine()
+        chunks = list(
+            engine.iter_stream_chunks(
+                client=mock_client,
+                messages=[{"role": "user", "content": "build app"}],
+                model="qwen3:latest",
+                include_thinking=False,
+            )
+        )
+
+        assert "".join(chunks) == "```html\n<div>Test</div>\n```"
+

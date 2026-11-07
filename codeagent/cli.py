@@ -110,10 +110,12 @@ SYSTEM_CODING_INSTRUCTIONS = (
 
 SYSTEM_STREAMING_CODING_INSTRUCTIONS = (
     "You are Coder with Code, an autonomous AI coding assistant running locally. Built in India. Designed for developers everywhere.\n"
-    "When asked to create, write, generate, or build code, an application, or a website:\n"
-    "1. Immediately start outputting the complete, self-contained, production-ready code inside standard markdown code blocks (e.g. ```html ... ```).\n"
-    "2. Include all HTML, CSS, and JavaScript directly with modern responsive styling and complete interactive logic.\n"
-    "3. Do NOT output long conversational filler or preamble—provide the complete working code block immediately so the system auto-saver can write it to disk.\n"
+    "CRITICAL MANDATES FOR CODE GENERATION:\n"
+    "1. You must BUILD and CODE directly. Never explain, lecture, outline, or hold internal monologues.\n"
+    "2. Do NOT write conversational greetings, introductory text, explanations, or conclusions.\n"
+    "3. Start your response IMMEDIATELY with ```html (or the appropriate language code block). Do not write any text before the code block.\n"
+    "4. Provide the COMPLETE, functional, self-contained implementation with full HTML, CSS styles, and JavaScript logic included.\n"
+    "5. Every button, interaction, and calculation must work end-to-end.\n"
 )
 
 
@@ -2302,7 +2304,14 @@ def _extract_and_save_code_blocks(
     code_block_pattern = re.compile(r"```([a-zA-Z0-9_\-\.\+]*)\r?\n(.*?)```", re.DOTALL)
     blocks = code_block_pattern.findall(response_text)
     if not blocks:
-        return saved_files
+        # Check if code block was unclosed (e.g., token limit reached before closing ```)
+        unclosed = re.findall(r"```([a-zA-Z0-9_\-\.\+]*)\r?\n(.*)$", response_text, re.DOTALL)
+        if unclosed:
+            blocks = unclosed
+        elif "<!doctype html" in response_text.lower() or "<html" in response_text.lower():
+            blocks = [("html", response_text)]
+        else:
+            return saved_files
 
     # Check for labeled code blocks (e.g., `### index.html\n```html...`)
     labeled_pattern = re.compile(
@@ -2358,7 +2367,10 @@ def _extract_and_save_code_blocks(
     for fname, code in targets_to_save:
         try:
             norm_name = Path(fname).name
-            res = fs_mgr.create_file(norm_name, content=code, overwrite=True)
+            clean_code = code.strip()
+            if clean_code.endswith("```"):
+                clean_code = clean_code[:-3].rstrip()
+            res = fs_mgr.create_file(norm_name, content=clean_code, overwrite=True)
             console.print(
                 f"[bold green]✔ Auto-saved generated code to [cyan]{norm_name}[/cyan] ({res.bytes_written} bytes)[/bold green]"
             )
@@ -2746,6 +2758,7 @@ def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> 
                     temperature=settings.temperature,
                     max_output_tokens=settings.max_output_tokens,
                     display=True,
+                    status_message=f"Synthesizing implementation with {active_model}...",
                 )
                 conv_mgr.add_assistant_message(assistant_response)
                 console.print()
@@ -2828,6 +2841,7 @@ def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> 
                     temperature=settings.temperature,
                     max_output_tokens=settings.max_output_tokens,
                     display=True,
+                    status_message=f"Synthesizing implementation with {active_model}...",
                 )
                 conv_mgr.add_assistant_message(assistant_response)
                 console.print()
@@ -3021,6 +3035,7 @@ def one_shot_mode(
                 temperature=cfg.temperature,
                 max_output_tokens=cfg.max_output_tokens,
                 display=True,
+                status_message=f"Synthesizing implementation with {model_name}...",
             )
             console.print()
             saved_files = _extract_and_save_code_blocks(clean_prompt, assistant_response, fs_mgr, console)
@@ -3119,6 +3134,7 @@ def one_shot_mode(
                 temperature=cfg.temperature,
                 max_output_tokens=cfg.max_output_tokens,
                 display=True,
+                status_message=f"Synthesizing implementation with {model_name}...",
             )
             console.print()
             fs_mgr = FilesystemManager(settings=cfg)
