@@ -1,4 +1,4 @@
-# Code AG: A Local-First, Autonomous Multi-Agent Architecture for Context-Aware Software Synthesis, Verification, and Self-Healing
+# Coder with Code: A Local-First, Autonomous Multi-Agent Architecture for Context-Aware Software Synthesis, Verification, and Self-Healing
 
 **Darshan P L**  
 *Department of Software Systems & AI Architecture*  
@@ -12,9 +12,9 @@ Repository: [https://github.com/dar2006sh8an13/code-.git](https://github.com/dar
 
 Cloud-hosted Large Language Model (LLM) coding assistants introduce severe friction in modern enterprise and private development workflows, including intellectual property exposure, telemetry leakage, non-deterministic latency, and substantial recurring operational expenditure. Concurrently, single-agent architectures frequently experience catastrophic context degradation, hallucinated syntax, and inability to recover from cascading execution failures across real-world codebases.
 
-In this paper, we present **Code AG**, a fully local-first, autonomous multi-agent software engineering system engineered to run deterministically on local workstation hardware without external cloud dependencies. Code AG integrates five specialized agent personas—**Planner**, **CodeAgent**, **Debugger**, **Reviewer**, and **Coordinator**—operating over a strictly typed, in-process asynchronous message bus with Directed Acyclic Graph (DAG) task scheduling and cycle detection. The system features a multi-tiered codebase indexing engine that pairs Abstract Syntax Tree (AST) parsing with boundary-preserving semantic chunking and dense-lexical hybrid retrieval ($k$-NN over ChromaDB embeddings combined with BM25/TF-IDF token matching). To ensure safe autonomy, Code AG implements a defense-in-depth execution boundary featuring canonical path traversal mitigation, symlink escape proofs, single-use Time-To-Live (TTL) human approval gates, and atomic SHA-256 pre-modification backups. Furthermore, we formalize a closed-loop 16-step autonomous debugging engine that translates raw interpreter tracebacks into structured AST anchors, generates minimal unified diff patches, enforces AST syntactic validation, and performs automatic regression testing with transactional rollback.
+In this paper, we present **Coder with Code**, a fully local-first, autonomous multi-agent software engineering system engineered to run deterministically on local workstation hardware without external cloud dependencies. Coder with Code integrates five specialized agent personas—**Planner**, **CodeAgent**, **Debugger**, **Reviewer**, and **Coordinator**—operating over a strictly typed, in-process asynchronous message bus with Directed Acyclic Graph (DAG) task scheduling and cycle detection. The system features a multi-tiered codebase indexing engine that pairs Abstract Syntax Tree (AST) parsing with boundary-preserving semantic chunking and dense-lexical hybrid retrieval ($k$-NN over ChromaDB embeddings combined with BM25/TF-IDF token matching). To ensure safe autonomy, Coder with Code implements a defense-in-depth execution boundary featuring canonical path traversal mitigation, symlink escape proofs, single-use Time-To-Live (TTL) human approval gates, and atomic SHA-256 pre-modification backups. Furthermore, we formalize a closed-loop 16-step autonomous debugging engine that translates raw interpreter tracebacks into structured AST anchors, generates minimal unified diff patches, enforces AST syntactic validation, and performs automatic regression testing with transactional rollback.
 
-We empirically validate Code AG across an extensive suite of 360 automated unit, integration, and scenario tests spanning 10 architectural phases. The evaluation demonstrates sub-50ms cold-start CLI latency, zero security sandbox escapes across adversarial path manipulation tests, and a 100% test pass rate across multi-file synthesis and automated error remediation tasks.
+We empirically validate Coder with Code across an extensive suite of 360 automated unit, integration, and scenario tests spanning 10 architectural phases. The evaluation demonstrates sub-50ms cold-start CLI latency, zero security sandbox escapes across adversarial path manipulation tests, and a 100% test pass rate across multi-file synthesis and automated error remediation tasks.
 
 **Keywords:** Multi-Agent Systems, Autonomous Software Engineering, Local-First AI, Automated Program Repair, Abstract Syntax Tree Parsing, Sandboxed Execution, Retrieval-Augmented Generation.
 
@@ -28,7 +28,7 @@ The advent of Large Language Models (LLMs) parameterized for source code generat
 2. **Context Window Starvation and Hallucination:** Single-prompt agent architectures force planning, context retrieval, code generation, error inspection, and security validation into a monolithic context window. This creates severe attentional dilution, token starvation, and loss of intermediate reasoning states during long-horizon tasks.
 3. **Execution Vulnerabilities and Lack of Rollback:** Autonomous systems that directly execute generated code or terminal commands risk data corruption, destructive directory modifications, command injection, and cascading regressions when generated patches fail unnoticed.
 
-To overcome these challenges, we introduce **Code AG**, an open-source, local-first autonomous software engineering framework designed for consumer and workstation hardware (e.g., Windows 11, Linux, macOS) utilizing quantized local inference engines such as **Ollama** running **Qwen3** (`qwen3:latest`).
+To overcome these challenges, we introduce **Coder with Code**, an open-source, local-first autonomous software engineering framework designed for consumer and workstation hardware (e.g., Windows 11, Linux, macOS) utilizing quantized local inference engines such as **Ollama** running **Qwen3** (`qwen3:latest`).
 
 ### 1.1 Contributions
 
@@ -43,7 +43,7 @@ This work presents the following primary contributions:
 
 ## 2. System Architecture
 
-Code AG is structured into seven decoupled, asynchronously coordinated subsystems, as visualized in Figure 1.
+Coder with Code is structured into seven decoupled, asynchronously coordinated subsystems, as visualized in Figure 1.
 
 ```mermaid
 flowchart TD
@@ -97,13 +97,13 @@ flowchart TD
     Safety_Layer --> Sandbox
     Sandbox --> Backup
 ```
-*Figure 1: High-level architectural topology of the Code AG multi-agent engineering platform.*
+*Figure 1: High-level architectural topology of the Coder with Code multi-agent engineering platform.*
 
 ---
 
 ## 3. Multi-Agent Orchestration & Workflow Scheduling
 
-Single-agent LLM systems conflate diverse cognitive responsibilities into a single loop, leading to prompt pollution and hallucinations. Code AG decomposes software engineering into five specialized agents $\mathcal{A} = \{a_{\text{coord}}, a_{\text{plan}}, a_{\text{code}}, a_{\text{debug}}, a_{\text{rev}}\}$.
+Single-agent LLM systems conflate diverse cognitive responsibilities into a single loop, leading to prompt pollution and hallucinations. Coder with Code decomposes software engineering into five specialized agents $\mathcal{A} = \{a_{\text{coord}}, a_{\text{plan}}, a_{\text{code}}, a_{\text{debug}}, a_{\text{rev}}\}$.
 
 ### 3.1 Agent Typology and Separation of Concerns
 
@@ -135,13 +135,13 @@ where $\mathcal{L}(v)$ denotes the set of canonical workspace paths targeted for
 
 ## 4. Codebase Intelligence & Retrieval-Augmented Generation (RAG)
 
-Effective code generation requires precise contextual localization within large codebases exceeding the model's finite context budget $\mathcal{B}_{\text{total}}$. Code AG addresses this via a multi-stage indexing and context synthesis pipeline.
+Effective code generation requires precise contextual localization within large codebases exceeding the model's finite context budget $\mathcal{B}_{\text{total}}$. Coder with Code addresses this via a multi-stage indexing and context synthesis pipeline.
 
 ### 4.1 AST-Guided Boundary-Preserving Chunking
 
 Standard naive sliding-window text chunking splits source code across arbitrary token boundaries, fragmenting method signatures, class hierarchies, and control blocks. 
 
-Code AG parses source code into an Abstract Syntax Tree $\mathcal{T} = \operatorname{Parse}(S)$. For each top-level node $n \in \mathcal{T}$, the chunker extracts functional units (classes, functions, interface definitions) while maintaining scope breadcrumbs:
+Coder with Code parses source code into an Abstract Syntax Tree $\mathcal{T} = \operatorname{Parse}(S)$. For each top-level node $n \in \mathcal{T}$, the chunker extracts functional units (classes, functions, interface definitions) while maintaining scope breadcrumbs:
 
 $$\operatorname{Chunk}(n) = \langle \operatorname{Scope}(n), \operatorname{Signature}(n), \operatorname{Body}(n), \operatorname{LineRange}(n) \rangle$$
 
@@ -159,7 +159,7 @@ Any component $|C_i| > 1$ represents a circular dependency loop, automatically f
 
 ### 4.3 Hybrid Context Retrieval Model
 
-When a user query $q$ is dispatched, Code AG combines dense semantic retrieval with sparse lexical keyword matching:
+When a user query $q$ is dispatched, Coder with Code combines dense semantic retrieval with sparse lexical keyword matching:
 
 $$S_{\text{hybrid}}(d, q) = \lambda \cdot S_{\text{dense}}(d, q) + (1 - \lambda) \cdot S_{\text{lexical}}(d, q)$$
 
@@ -170,7 +170,7 @@ where:
 
 ### 4.4 Strict Context Budget Allocation
 
-Let $\mathcal{B}_{\text{total}}$ be the maximum token capacity of the inference context (e.g., 8,192 tokens for local Qwen3). Code AG partitions the available space strictly:
+Let $\mathcal{B}_{\text{total}}$ be the maximum token capacity of the inference context (e.g., 8,192 tokens for local Qwen3). Coder with Code partitions the available space strictly:
 
 $$\mathcal{B}_{\text{total}} = \mathcal{B}_{\text{system}} + \mathcal{B}_{\text{prompt}} + \mathcal{B}_{\text{code}} + \mathcal{B}_{\text{history}} + \mathcal{B}_{\text{reserve}}$$
 
@@ -190,7 +190,7 @@ When multi-turn conversation history exceeds $\mathcal{B}_{\text{history}}$, a c
 
 ## 5. Execution Sandboxing and Safety Infrastructure
 
-Autonomous agents with shell execution permissions represent severe security risks. Code AG enforces a multi-layer defense-in-depth safety perimeter.
+Autonomous agents with shell execution permissions represent severe security risks. Coder with Code enforces a multi-layer defense-in-depth safety perimeter.
 
 ### 5.1 Canonical Path Traversal Defense
 
@@ -222,11 +222,11 @@ subprocess.Popen(
 )
 ```
 
-On Windows operating environments, child processes spawned by build tools or test runners can detach and orphan. Code AG tracks process trees by PID and executes structured tree termination via `taskkill /F /T /PID <pid>` upon timeout expiration (default 30.0s).
+On Windows operating environments, child processes spawned by build tools or test runners can detach and orphan. Coder with Code tracks process trees by PID and executes structured tree termination via `taskkill /F /T /PID <pid>` upon timeout expiration (default 30.0s).
 
 ### 5.4 Pre-Modification Snapshot Backups
 
-Prior to applying any file modification or patch $\Delta$, Code AG writes a SHA-256 verified snapshot of the target file into `.codeagent/backups/`:
+Prior to applying any file modification or patch $\Delta$, Coder with Code writes a SHA-256 verified snapshot of the target file into `.codeagent/backups/`:
 
 $$\mathcal{H}_{\text{pre}} = \operatorname{SHA256}(F_{\text{original}})$$
 
@@ -316,7 +316,7 @@ Patches that fail syntactic validation are immediately rejected without touching
 
 ## 7. Empirical Evaluation and Experimental Results
 
-We evaluate Code AG across five quantitative criteria: execution latency, test suite reliability across system phases, security sandbox robustness, RAG retrieval accuracy, and self-healing convergence.
+We evaluate Coder with Code across five quantitative criteria: execution latency, test suite reliability across system phases, security sandbox robustness, RAG retrieval accuracy, and self-healing convergence.
 
 ### 7.1 Test Suite Verification Across Phases
 
@@ -340,7 +340,7 @@ The system was developed and validated across 10 progressive phases. The entire 
 
 ### 7.2 Latency and Cold-Start Profiling
 
-To ensure responsive command-line interaction, Code AG employs lazy module loading. Subcommands that do not require neural inference (`code --version`, `code config`, `code monitor`) bypass initialization of the LLM client, ChromaDB, and network stack.
+To ensure responsive command-line interaction, Coder with Code employs lazy module loading. Subcommands that do not require neural inference (`code --version`, `code config`, `code monitor`) bypass initialization of the LLM client, ChromaDB, and network stack.
 
 | Command Invocations | Initialization Path | Cold Start (ms) | Memory RSS (MB) |
 | :--- | :--- | :---: | :---: |
@@ -359,7 +359,7 @@ We subjected the safety boundary to an adversarial test suite evaluating 100 mal
 - Concatenated shell injections: `pytest; rm -rf /`
 - Environment variable injection attempts
 
-**Result:** Code AG recorded a **0% breach rate (100/100 attacks blocked)**. In every instance, the canonical path validator or the command AST filter intervened, logged the security event to `audit.jsonl` with credential masking, and prevented process execution.
+**Result:** Coder with Code recorded a **0% breach rate (100/100 attacks blocked)**. In every instance, the canonical path validator or the command AST filter intervened, logged the security event to `audit.jsonl` with credential masking, and prevented process execution.
 
 ---
 
@@ -372,13 +372,13 @@ Commercial systems such as GitHub Copilot Workspace, Devin (Cognition), and Curs
 MetaGPT (Hong et al., 2023) and ChatDev (Qian et al., 2023) introduced Simulated Software Companies utilizing role-playing agents (CEO, CTO, Programmer). However, their workflows are primarily communicative and theoretical, lacking atomic filesystem sandboxing, operating system process tree controls, and transactional patch rollback.
 
 ### 8.3 Automated Program Repair (APR)
-Traditional APR systems (e.g., GenProg, SemFix) utilize genetic algorithms and symbolic execution. LLM-based repair systems (e.g., RepairLLaMA) demonstrate superior semantic comprehension. Code AG extends LLM-based APR by coupling AST-validated diff generation directly with a live test-execution feedback loop and automatic regression rollback.
+Traditional APR systems (e.g., GenProg, SemFix) utilize genetic algorithms and symbolic execution. LLM-based repair systems (e.g., RepairLLaMA) demonstrate superior semantic comprehension. Coder with Code extends LLM-based APR by coupling AST-validated diff generation directly with a live test-execution feedback loop and automatic regression rollback.
 
 ---
 
 ## 9. Conclusion and Future Directions
 
-In this paper, we introduced **Code AG**, a local-first, autonomous multi-agent software engineering system that bridges the gap between privacy, security, and developer productivity. By combining five specialized agents, DAG workflow scheduling, AST-guided RAG indexing, a strict defense-in-depth security perimeter, and a closed-loop 16-step self-healing engine, Code AG achieves reliable autonomous software synthesis and error remediation entirely on local consumer hardware.
+In this paper, we introduced **Coder with Code**, a local-first, autonomous multi-agent software engineering system that bridges the gap between privacy, security, and developer productivity. By combining five specialized agents, DAG workflow scheduling, AST-guided RAG indexing, a strict defense-in-depth security perimeter, and a closed-loop 16-step self-healing engine, Coder with Code achieves reliable autonomous software synthesis and error remediation entirely on local consumer hardware.
 
 Our open-source release includes the complete codebase, architecture specifications, and an automated 360-test verification harness, serving as a robust foundation for sovereign, local-first developer tooling.
 
@@ -400,3 +400,4 @@ Future work will focus on:
 6. Tarjan, R. (1972). *Depth-First Search and Linear Graph Algorithms*. SIAM Journal on Computing, 1(2), 146-160.
 7. Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). *Attention Is All You Need*. Advances in Neural Information Processing Systems (NeurIPS), 30.
 8. Weiser, M. (1984). *Program Slicing*. IEEE Transactions on Software Engineering, (4), 352-357.
+

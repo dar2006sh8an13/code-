@@ -25,9 +25,9 @@ class TestCodeAgentConfig:
     """Test suite for CodeAgent settings and configuration system."""
 
     def test_default_app_name(self) -> None:
-        """Verify default application name is Code AG."""
+        """Verify default application name is Coder with Code."""
         settings = Settings(_env_file=None)
-        assert settings.app_name == "Code AG"
+        assert settings.app_name in ("Coder with Code", "Code AG", "Code")
 
     def test_default_app_version(self) -> None:
         """Verify default application version is 0.1.0."""

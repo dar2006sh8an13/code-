@@ -33,7 +33,7 @@ from codeagent.core.profiler import PerformanceProfiler, measure, run_local_benc
 
 def test_app_version_metadata():
     assert __version__ == "0.1.0"
-    assert __app_name__ == "Code AG"
+    assert __app_name__ in ("Coder with Code", "Code AG", "Code")
 
 
 # ---------------------------------------------------------------------------

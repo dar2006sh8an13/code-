@@ -91,13 +91,13 @@ from codeagent.banner import display_startup_banner, build_banner_renderable
 console = Console()
 app = typer.Typer(
     name="codeag",
-    help="Code AG: Local Autonomous AI Coding Assistant powered by Ollama and Qwen3.",
+    help="Coder with Code: Local Autonomous AI Coding Assistant powered by Ollama and Qwen3.",
     no_args_is_help=False,
     add_completion=False,
 )
 
 SYSTEM_CODING_INSTRUCTIONS = (
-    "You are Code AG, an autonomous AI coding assistant running locally. Built in India. Designed for developers everywhere.\n"
+    "You are Coder with Code, an autonomous AI coding assistant running locally. Built in India. Designed for developers everywhere.\n"
     "You have access to safe filesystem tools: `create_file`, `read_file`, `edit_file`, `create_directory`.\n\n"
     "CRITICAL CODING INSTRUCTIONS:\n"
     "1. When the user asks you to create, write, generate, or build any code or file, you MUST invoke the `create_file` tool.\n"
@@ -127,7 +127,7 @@ def render_execution_status(phase: str, details: str, target_console: Optional[C
 
 
 def display_banner(settings: Settings, active_model: str, is_online: bool, workspace_root: Optional[str] = None) -> None:
-    """Display a professional startup banner for Code AG (backward compatibility wrapper)."""
+    """Display a professional startup banner for Coder with Code (backward compatibility wrapper)."""
     display_startup_banner(
         console=console,
         settings=settings,
@@ -1984,7 +1984,7 @@ def handle_monitor_cli(settings: Settings) -> None:
     agent_item = mon.check_agent_health()
     tools_item = mon.check_tools_health()
 
-    table = Table(title="Code AG Subsystem Monitor", show_header=True, header_style="bold cyan")
+    table = Table(title="Coder with Code Subsystem Monitor", show_header=True, header_style="bold cyan")
     table.add_column("Component", style="bold white", width=22)
     table.add_column("Status", justify="center", width=10)
     table.add_column("Details", style="white")
@@ -2341,7 +2341,7 @@ def _extract_and_save_code_blocks(
 
 
 def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> None:
-    """Run Code AG in continuous interactive REPL mode with Phase 2, 3 & 5 capabilities."""
+    """Run Coder with Code in continuous interactive REPL mode with Phase 2, 3 & 5 capabilities."""
     active_model = model_name
 
     # Initialize Phase 2, 3 & 5 engines
@@ -2658,7 +2658,7 @@ def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> 
             system_prompt = f"{SYSTEM_CODING_INSTRUCTIONS}\n\nWorkspace Context:\n{project_context_text}" if project_context_text else SYSTEM_CODING_INSTRUCTIONS
         else:
             project_context_text = project_context_bundle.to_prompt_context(max_tokens=2500)
-            system_prompt = f"You are Code AG, an advanced autonomous AI coding assistant.\n\n{project_context_text}" if project_context_text else None
+            system_prompt = f"You are Coder with Code, an advanced autonomous AI coding assistant.\n\n{project_context_text}" if project_context_text else None
 
         # Enforce context window and token budget
         fitted_messages = context_mgr.fit_messages(conv_mgr.get_messages_for_llm(), system_prompt=system_prompt)
@@ -2957,7 +2957,7 @@ def one_shot_mode(
             )
             tool_executor = ToolExecutor(registry=tool_registry)
 
-            sys_prompt = SYSTEM_CODING_INSTRUCTIONS if is_coding_request else "You are Code AG, an advanced autonomous AI coding assistant."
+            sys_prompt = SYSTEM_CODING_INSTRUCTIONS if is_coding_request else "You are Coder with Code, an advanced autonomous AI coding assistant."
             messages = [
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": clean_prompt},
@@ -3192,7 +3192,7 @@ def cli(
         is_eager=True,
     ),
 ) -> None:
-    """Code AG: Local Autonomous AI Coding Assistant powered by Ollama and Qwen3."""
+    """Coder with Code: Local Autonomous AI Coding Assistant powered by Ollama and Qwen3."""
     from codeagent.core.logger import CodeAgentLogger
     settings = get_settings()
     CodeAgentLogger.setup_logging(settings=settings)

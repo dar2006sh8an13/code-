@@ -1,7 +1,7 @@
-"""Central version and metadata definitions for CodeAgent (Code AG)."""
+"""Central version and metadata definitions for Coder with Code."""
 
 __version__ = "0.1.0"
-__app_name__ = "Code AG"
+__app_name__ = "Coder with Code"
 __tagline__ = "Built in India. Designed for developers everywhere."
 __author__ = "CodeAgent Team"
 __license__ = "Apache-2.0"

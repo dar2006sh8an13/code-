@@ -15,6 +15,21 @@ from rich.text import Text
 from codeagent.config.settings import Settings, get_settings
 
 
+# ASCII art logo for Coder with Code (wide, width: 67)
+CODER_WITH_CODE_ASCII_LOGO = r"""  ____          _              _ _   _        ____          _      
+ / ___|___   __| | ___ _ __   (_) |_| |__    / ___|___   __| | ___ 
+| |   / _ \ / _` |/ _ \ '__|  | | __| '_ \  | |   / _ \ / _` |/ _ \
+| |__| (_) | (_| |  __/ |     | | |_| | | | | |__| (_) | (_| |  __/
+ \____\___/ \__,_|\___|_|     |_|\__|_| |_|  \____\___/ \__,_|\___|"""
+
+# ASCII art logo for Coder (compact, width: 29)
+CODER_COMPACT_ASCII_LOGO = r"""  ____          _            
+ / ___|___   __| | ___ _ __  
+| |   / _ \ / _` |/ _ \ '__| 
+| |__| (_) | (_| |  __/ |    
+ \____\___/ \__,_|\___|_|    
+        with Code"""
+
 # Exact ASCII art logo for Code AG (width: 39 characters)
 CODEAGENT_ASCII_LOGO = r"""  ____          _            _    ____ 
  / ___|___   __| | ___      / \  / ___|
@@ -67,7 +82,14 @@ def build_banner_renderable(
         status_line = "[bold red]Offline (Ollama unavailable)[/bold red]"
 
     # Handle narrow terminals gracefully without wrapping the ASCII logo
-    logo_to_use = CODE_ASCII_LOGO if cfg.app_name in ("Code", "code") else CODEAGENT_ASCII_LOGO
+    app_lower = (cfg.app_name or "").strip().lower()
+    if app_lower in ("coder with code", "coder"):
+        logo_to_use = CODER_WITH_CODE_ASCII_LOGO if terminal_width >= 75 else CODER_COMPACT_ASCII_LOGO
+    elif app_lower in ("code",):
+        logo_to_use = CODE_ASCII_LOGO
+    else:
+        logo_to_use = CODEAGENT_ASCII_LOGO
+
     if terminal_width < NARROW_TERMINAL_THRESHOLD:
         header_text = (
             f"[bold cyan]{cfg.app_name}[/bold cyan] [dim]v{version}[/dim]\n"
@@ -95,7 +117,7 @@ def build_banner_renderable(
         metadata_lines.append("")
         metadata_lines.append(
             f" [bold red][!] Warning:[/bold red] Ollama server is unreachable at [bold]{cfg.ollama_host}[/bold].\n"
-            "     Code AG requires Ollama to generate responses.\n"
+            f"     {cfg.app_name} requires Ollama to generate responses.\n"
             "     Please start Ollama in another terminal using [bold green]ollama serve[/bold green]."
         )
 

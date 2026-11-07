@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     )
 
     app_name: str = Field(
-        default="Code AG",
+        default="Coder with Code",
         description="Name of the application",
         alias="APP_NAME",
     )
