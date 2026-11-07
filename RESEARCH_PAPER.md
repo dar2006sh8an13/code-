@@ -4,7 +4,7 @@
 *Department of Software Systems & AI Architecture*  
 *Independent Research & Development*  
 Email: `dar2006sh8an13@users.noreply.github.com`  
-Repository: [https://github.com/dar2006sh8an13/code-.git](https://github.com/dar2006sh8an13/code-.git)
+Repository: [https://github.com/dar2006sh8an13/coder-with-code.git](https://github.com/dar2006sh8an13/coder-with-code.git)
 
 ---
 
