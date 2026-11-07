@@ -108,6 +108,14 @@ SYSTEM_CODING_INSTRUCTIONS = (
     "6. Never report completion until the file has been created and verified on disk.\n"
 )
 
+SYSTEM_STREAMING_CODING_INSTRUCTIONS = (
+    "You are Coder with Code, an autonomous AI coding assistant running locally. Built in India. Designed for developers everywhere.\n"
+    "When asked to create, write, generate, or build code, an application, or a website:\n"
+    "1. Immediately start outputting the complete, self-contained, production-ready code inside standard markdown code blocks (e.g. ```html ... ```).\n"
+    "2. Include all HTML, CSS, and JavaScript directly with modern responsive styling and complete interactive logic.\n"
+    "3. Do NOT output long conversational filler or preamble—provide the complete working code block immediately so the system auto-saver can write it to disk.\n"
+)
+
 
 def render_execution_status(phase: str, details: str, target_console: Optional[Console] = None) -> None:
     """Render structured execution lifecycle status distinguishing agent phases."""
@@ -2676,7 +2684,7 @@ def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> 
         if is_coding_request:
             # Compact context to maximize prompt processing speed on local inference
             project_context_text = project_context_bundle.to_prompt_context(max_tokens=300)
-            system_prompt = f"{SYSTEM_CODING_INSTRUCTIONS}\n\nWorkspace Context:\n{project_context_text}" if project_context_text else SYSTEM_CODING_INSTRUCTIONS
+            system_prompt = f"{SYSTEM_STREAMING_CODING_INSTRUCTIONS}\n\nWorkspace Context:\n{project_context_text}" if project_context_text else SYSTEM_STREAMING_CODING_INSTRUCTIONS
         else:
             project_context_text = project_context_bundle.to_prompt_context(max_tokens=2500)
             system_prompt = f"You are Coder with Code, an advanced autonomous AI coding assistant.\n\n{project_context_text}" if project_context_text else None
@@ -3001,7 +3009,7 @@ def one_shot_mode(
                 delete_confirmation_callback=cli_delete_confirmation,
             )
             streaming_engine = StreamingEngine(console=console)
-            sys_prompt = SYSTEM_CODING_INSTRUCTIONS
+            sys_prompt = SYSTEM_STREAMING_CODING_INSTRUCTIONS
             messages = [
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": clean_prompt},
