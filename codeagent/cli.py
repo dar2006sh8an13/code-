@@ -3322,7 +3322,18 @@ def cli(
             console.print(f"[bold red]Error Analysis Failed:[/bold red] {exc}")
             raise typer.Exit(code=1)
 
-    # Route 2: Subcommands (Phase 8, 9, 10)
+    # Route 2: Check if invoked as "coder with code" or "with code"
+    combined_tokens = [prompt.strip().lower()] if prompt else []
+    if args:
+        combined_tokens.extend([a.strip().lower() for a in args])
+    if ctx and hasattr(ctx, "args") and ctx.args:
+        combined_tokens.extend([str(a).strip().lower() for a in ctx.args])
+    combined_cmd = " ".join(combined_tokens).strip()
+    if combined_cmd in ("with code", "coder with code", "code with code", "coder-with-code", "coderwithcode"):
+        prompt = None
+        args = None
+
+    # Route 3: Subcommands (Phase 8, 9, 10)
     if prompt:
         p_lower = prompt.strip().lower()
         sub_args = (args or []) + (list(ctx.args) if ctx and hasattr(ctx, "args") else [])

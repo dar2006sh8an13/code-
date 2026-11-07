@@ -7,6 +7,10 @@ if /I "%~1"=="vscode" (
         goto :eof
     )
 )
+if /I "%~1"=="with" if /I "%~2"=="code" (
+    shift
+    shift
+)
 if /I "%~1"=="ag" (
     shift
 )

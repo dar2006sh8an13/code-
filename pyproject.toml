@@ -38,6 +38,10 @@ dev = [
 codeag = "codeagent.main:main"
 "code-ag" = "codeagent.main:main"
 codeagent = "codeagent.main:main"
+coder = "codeagent.main:main"
+code = "codeagent.main:main"
+"coder-with-code" = "codeagent.main:main"
+coderwithcode = "codeagent.main:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
