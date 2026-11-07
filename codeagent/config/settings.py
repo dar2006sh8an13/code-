@@ -39,12 +39,12 @@ class Settings(BaseSettings):
         alias="MODEL_NAME",
     )
     request_timeout: float = Field(
-        default=300.0,
+        default=600.0,
         description="Request timeout in seconds",
         alias="REQUEST_TIMEOUT",
     )
     tool_call_timeout: float = Field(
-        default=45.0,
+        default=300.0,
         description="Tool evaluation timeout in seconds",
         alias="TOOL_CALL_TIMEOUT",
     )

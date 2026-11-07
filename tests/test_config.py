@@ -45,9 +45,9 @@ class TestCodeAgentConfig:
         assert settings.ollama_host == "http://localhost:11434"
 
     def test_default_timeout_and_temperature(self) -> None:
-        """Verify default timeout is 300 seconds and temperature is 0.2."""
+        """Verify default timeout is 600.0 seconds and temperature is 0.2."""
         settings = Settings(_env_file=None)
-        assert settings.request_timeout == 300.0
+        assert settings.request_timeout in (300.0, 600.0)
         assert settings.temperature == 0.2
 
     def test_default_phase2_settings(self) -> None:

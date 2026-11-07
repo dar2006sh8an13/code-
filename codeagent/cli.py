@@ -2326,6 +2326,27 @@ def _extract_and_save_code_blocks(
                 targets_to_save.append((target_fname, matched_code))
                 break
 
+    if not targets_to_save and blocks:
+        # Infer default filenames based on code language and user intent
+        for lang, code in blocks:
+            code_str = code.strip()
+            if not code_str:
+                continue
+            lang_clean = lang.lower().strip()
+            if lang_clean in ("html", "htm") or "<!doctype html" in code_str.lower() or "<html" in code_str.lower():
+                targets_to_save.append(("index.html", code_str))
+            elif lang_clean == "css":
+                targets_to_save.append(("styles.css", code_str))
+            elif lang_clean in ("js", "javascript"):
+                targets_to_save.append(("script.js", code_str))
+            elif lang_clean in ("py", "python"):
+                suggested = "calculator.py" if "calculator" in prompt_lower else "app.py"
+                targets_to_save.append((suggested, code_str))
+            elif lang_clean == "json":
+                targets_to_save.append(("data.json", code_str))
+            elif len(blocks) == 1:
+                targets_to_save.append(("index.html" if "website" in prompt_lower or "web" in prompt_lower else "output.txt", code_str))
+
     for fname, code in targets_to_save:
         try:
             norm_name = Path(fname).name
@@ -2713,7 +2734,7 @@ def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> 
 
                 tool_client = OllamaSDKClient(
                     host=settings.ollama_host,
-                    timeout=settings.tool_call_timeout,
+                    timeout=max(settings.tool_call_timeout, 300.0),
                 )
 
                 def _on_call(fname: str, fargs: dict):
@@ -2735,13 +2756,28 @@ def interactive_mode(client: LLMClient, model_name: str, settings: Settings) -> 
                     )
                 except (OllamaTimeoutError, httpx.TimeoutException, TimeoutError, socket.timeout):
                     tool_timed_out = True
-                    render_execution_status("Execution failed", f"Request timed out waiting for model '{active_model}'.", console)
                 except KeyboardInterrupt:
                     render_execution_status("Execution failed", "Request cancelled by user.", console)
                     raise
 
                 if tool_timed_out:
-                    console.print("\n[yellow]Notice: Tool evaluation timed out on local hardware. The file was not created.[/yellow]\n")
+                    console.print(
+                        f"\n[yellow]Notice: Tool call timed out waiting for {active_model}. Falling back to direct streaming generation...[/yellow]\n"
+                    )
+                    assistant_response = streaming_engine.stream_chat(
+                        client=client._client,
+                        messages=fitted_messages,
+                        model=active_model,
+                        temperature=settings.temperature,
+                        max_output_tokens=settings.max_output_tokens,
+                        display=True,
+                    )
+                    conv_mgr.add_assistant_message(assistant_response)
+                    console.print()
+                    saved = _extract_and_save_code_blocks(user_input, assistant_response, fs_mgr, console)
+                    if saved:
+                        for sf in saved:
+                            render_execution_status("File verified", f"Generated and confirmed '{sf}' on disk", console)
                 elif final_text is not None:
                     console.print()
                     console.print(Markdown(final_text))
@@ -2966,7 +3002,7 @@ def one_shot_mode(
             response = None
             tool_client = OllamaSDKClient(
                 host=cfg.ollama_host,
-                timeout=cfg.tool_call_timeout,
+                timeout=max(cfg.tool_call_timeout, 300.0),
             )
 
             def _status_callback(phase: str, details: str):
@@ -2984,13 +3020,27 @@ def one_shot_mode(
                 )
             except (OllamaTimeoutError, httpx.TimeoutException, TimeoutError, socket.timeout):
                 tool_timed_out = True
-                render_execution_status("Execution failed", f"Request timed out waiting for model '{model_name}'.", console)
             except KeyboardInterrupt:
                 render_execution_status("Execution failed", "Request cancelled by user.", console)
                 raise
 
             if tool_timed_out:
-                console.print("\n[yellow]Notice: Tool evaluation timed out on local hardware. The file was not created.[/yellow]\n")
+                console.print(
+                    f"\n[yellow]Notice: Tool call timed out waiting for {model_name}. Falling back to direct streaming generation...[/yellow]\n"
+                )
+                assistant_response = streaming_engine.stream_chat(
+                    client=client._client,
+                    messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": clean_prompt}],
+                    model=model_name,
+                    temperature=cfg.temperature,
+                    max_output_tokens=cfg.max_output_tokens,
+                    display=True,
+                )
+                console.print()
+                saved = _extract_and_save_code_blocks(clean_prompt, assistant_response, fs_mgr, console)
+                if saved:
+                    for sf in saved:
+                        render_execution_status("File verified", f"Generated and confirmed '{sf}' on disk", console)
             elif response is not None:
                 console.print()
                 console.print(Markdown(response))

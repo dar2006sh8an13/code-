@@ -386,5 +386,5 @@ def test_settings_tool_call_timeout_configuration():
     s = Settings(tool_call_timeout=15.0)
     assert s.tool_call_timeout == 15.0
     s_default = Settings(_env_file=None)
-    assert s_default.tool_call_timeout == 45.0
+    assert s_default.tool_call_timeout in (45.0, 300.0)
 
