@@ -15,20 +15,20 @@ from rich.text import Text
 from codeagent.config.settings import Settings, get_settings
 
 
-# ASCII art logo for Coder with Code (width: 66)
-CODER_WITH_CODE_ASCII_LOGO = r"""  ____          _                           ____          _      
- / ___|___   __| | ___ _ __                / ___|___   __| | ___ 
-| |   / _ \ / _` |/ _ \ '__|   • with •   | |   / _ \ / _` |/ _ \
-| |__| (_) | (_| |  __/ |                  | |__| (_) | (_| |  __/
- \____\___/ \__,_|\___|_|                   \____\___/ \__,_|\___|"""
+# ASCII art logo for Coder with Code (wide, width: 85)
+CODER_WITH_CODE_ASCII_LOGO = r"""  ____ ___  ____  _____ ____    __        _____ _____ _   _    ____ ___  ____  _____ 
+ / ___/ _ \|  _ \| ____|  _ \   \ \      / |_ _|_   _| | | |  / ___/ _ \|  _ \| ____|
+| |  | | | | | | |  _| | |_) |   \ \ /\ / / | |  | | | |_| | | |  | | | | | | |  _|  
+| |__| |_| | |_| | |___|  _ <     \ V  V /  | |  | | |  _  | | |__| |_| | |_| | |___ 
+ \____\___/|____/|_____|_| \_\     \_/\_/  |___| |_| |_| |_|  \____\___/|____/|_____|"""
 
-# ASCII art logo for Coder (compact, width: 29)
-CODER_COMPACT_ASCII_LOGO = r"""  ____          _            
- / ___|___   __| | ___ _ __  
-| |   / _ \ / _` |/ _ \ '__| 
-| |__| (_) | (_| |  __/ |    
- \____\___/ \__,_|\___|_|    
-        with Code"""
+# ASCII art logo for Coder (compact, width: 30)
+CODER_COMPACT_ASCII_LOGO = r"""  ____ ___  ____  _____ ____  
+ / ___/ _ \|  _ \| ____|  _ \ 
+| |  | | | | | | |  _| | |_) |
+| |__| |_| | |_| | |___|  _ < 
+ \____\___/|____/|_____|_| \_\
+          with Code"""
 
 # Exact ASCII art logo for Code AG (width: 39 characters)
 CODEAGENT_ASCII_LOGO = r"""  ____          _            _    ____ 
@@ -84,7 +84,7 @@ def build_banner_renderable(
     # Handle narrow terminals gracefully without wrapping the ASCII logo
     app_lower = (cfg.app_name or "").strip().lower()
     if app_lower in ("coder with code", "coder"):
-        logo_to_use = CODER_WITH_CODE_ASCII_LOGO if terminal_width >= 70 else CODER_COMPACT_ASCII_LOGO
+        logo_to_use = CODER_WITH_CODE_ASCII_LOGO if terminal_width >= 88 else CODER_COMPACT_ASCII_LOGO
     elif app_lower in ("code",):
         logo_to_use = CODE_ASCII_LOGO
     else:
